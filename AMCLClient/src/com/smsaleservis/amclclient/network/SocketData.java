@@ -102,6 +102,14 @@ class SocketData {
 		return buffered_writer;
 	}
 	
+	boolean areCommunicationElementsOk() {
+		
+		if (getSocket() == null || getBufferedReader() == null || getBufferedWriter() == null)
+			return false;
+		
+		return true;
+	}
+	
 	public boolean isConnectionEstablished() {
 		
 		return connection_established;

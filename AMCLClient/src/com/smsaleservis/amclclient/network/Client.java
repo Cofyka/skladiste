@@ -10,7 +10,23 @@ import java.net.UnknownHostException;
 
 public class Client {
 	
-	protected SocketData socket_data;
+	private SocketData socket_data;
+	
+	public Client() {
+		
+	}
+	
+	Client(String host_name, int communication_port) {
+		
+		setSocketData(new SocketData(host_name, communication_port));
+		
+	}
+	
+	private void setSocketData(SocketData socket_data) {
+		
+		this.socket_data = socket_data;
+		
+	}
 	
 	public void connect() throws NullPointerException, UnknownHostException, IOException {
 		
@@ -26,12 +42,35 @@ public class Client {
 		socket_data.setBufferedReader(new BufferedReader(new InputStreamReader(socket_data.getSocket().getInputStream())));
 		socket_data.setBufferedWriter(new BufferedWriter(new OutputStreamWriter(socket_data.getSocket().getOutputStream())));
 		
-		if (socket_data.getSocket() == null || socket_data.getBufferedReader() == null || socket_data.getBufferedWriter() == null)
+		if (!socket_data.areCommunicationElementsOk())
 			throw new IOException("Failed to establish connection.");
 		
 		socket_data.setConnectionEstablished(true);
 		
 		socket_data.getSocket().setKeepAlive(true);
+		
+	}
+	
+	public void disconnect() throws IOException {
+		
+		if (!socket_data.isConnectionEstablished())
+			throw new IOException("The connection wasn't established.");
+			
+		if (!socket_data.areCommunicationElementsOk())
+			throw new IOException("Failed to close connection.");
+		
+		socket_data.getSocket().close();
+		socket_data.getBufferedReader().close();
+		socket_data.getBufferedWriter().close();
+		
+		socket_data.setConnectionEstablished(false);
+		
+	}
+	
+	public void sendMessage(String message) throws IOException {
+		
+		if (!socket_data.isConnectionEstablished())
+			throw new IOException("The connection is not established.");	
 		
 	}
 	
